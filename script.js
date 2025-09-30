@@ -9,7 +9,6 @@ const descriptionEl = document.getElementById("description");
 const humidityEl = document.getElementById("humidity");
 const windEl = document.getElementById("wind");
 const pressureEl = document.getElementById("pressure");
-const weatherIconEl = document.getElementById("weather-icon");
 const forecastCards = document.getElementById("forecast-cards");
 const aqiEl = document.getElementById("aqi");
 const saveBtn = document.getElementById("save-btn");
@@ -76,7 +75,6 @@ async function getWeather(city) {
         humidityEl.textContent = `Humidity: ${data.main.humidity}%`;
         windEl.textContent = `Wind: ${data.wind.speed} m/s`;
         pressureEl.textContent = `Pressure: ${data.main.pressure} hPa`;
-        weatherIconEl.src = `http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
 
         // AQI
         const lat = data.coord.lat;
