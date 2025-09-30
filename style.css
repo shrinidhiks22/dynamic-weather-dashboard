@@ -1,0 +1,75 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    transition: background 0.5s, color 0.5s;
+}
+
+.container {
+    width: 90%;
+    max-width: 1000px;
+    margin: auto;
+    padding: 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.search {
+    margin: 20px 0;
+}
+
+input, button {
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+#weather-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+#weather-left {
+    flex: 1;
+    min-width: 150px;
+    text-align: left;
+}
+
+#weather-right {
+    flex: 2;
+    min-width: 250px;
+}
+
+#forecast {
+    margin-top: 30px;
+}
+
+#forecast-cards {
+    display: flex;
+    overflow-x: auto; /* Horizontal scroll */
+    gap: 10px;
+}
+
+.forecast-card {
+    min-width: 140px;
+    background: rgba(255,255,255,0.2);
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+body.day {
+    background: linear-gradient(to top, #87ceeb, #ffffff);
+    color: #000;
+}
+
+body.night {
+    background: linear-gradient(to top, #2c3e50, #34495e);
+    color: #fff;
+}

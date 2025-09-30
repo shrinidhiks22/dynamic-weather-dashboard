@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Weather Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Dynamic Weather Dashboard</h1>
+            <button id="theme-toggle">🌗</button>
+        </header>
+
+        <div class="search">
+            <input type="text" id="city-input" placeholder="Enter city name">
+            <button id="search-btn">Search</button>
+            <button id="voice-btn">🎤 Voice Search</button>
+        </div>
+
+        <div id="favorites">
+            <h3>Favorite Cities</h3>
+            <div id="favorite-list"></div>
+        </div>
+
+        <div id="weather-container">
+            <div id="weather-left">
+                <h2 id="city-name"></h2>
+                <p id="date-time"></p>
+            </div>
+            <div id="weather-right">
+                <div id="weather-details">
+                    
+                    <p id="temp"></p>
+                    <p id="description"></p>
+                    <p id="humidity"></p>
+                    <p id="wind"></p>
+                    <p id="pressure"></p>
+                    <p id="aqi"></p>
+                </div>
+                <button id="save-btn">⭐ Save City</button>
+            </div>
+        </div>
+
+        <div id="forecast">
+            <h3>5-Day Forecast</h3>
+            <div id="forecast-cards"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
