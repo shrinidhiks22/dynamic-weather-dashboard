@@ -285,19 +285,6 @@ header h1 {
   opacity: 1;
 }
 
-body.light .theme-toggle {
-  background: linear-gradient(145deg, #71b1f9, #4794ff);
-  transform: rotate(360deg);
-}
-
-body.light .theme-toggle .sun {
-  opacity: 1;
-}
-
-body.light .theme-toggle .moon {
-  opacity: 0;
-}
-
 /* ===== Footer ===== */
 footer {
   margin-top: 80px;
@@ -315,33 +302,81 @@ body.light {
   color: #111;
 }
 
-body.light .weather-box,
-body.light .air-conditions,
+body.light header h1 {
+  color: #1f3b8c;
+}
+
+/* ===== Search Box Light Mode ===== */
+body.light .search-section input {
+  background: #ffffff;
+  color: #111;
+  border: 2px solid #8c75ff;
+}
+
+body.light .search-section input::placeholder {
+  color: #555;
+}
+
+body.light .search-section button {
+  background: #8c75ff;
+  color: #fff;
+}
+
+body.light .search-section button:hover {
+  background: #6a54c4;
+  color: #fff;
+}
+
+/* ===== Info Banner Light Mode ===== */
 body.light .info-banner {
   background: #ffffff;
   color: #111;
   box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
 }
 
-body.light header h1 {
-  color: #1f3b8c;
+/* ===== Weather + Air Conditions Light Mode ===== */
+body.light .weather-box,
+body.light .air-conditions {
+  background: #ffffff;
+  color: #111;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
 }
 
+/* ===== Air Conditions Boxes Light Mode ===== */
 body.light .condition {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   color: #111;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
 body.light .condition i {
   color: #6a54c4;
 }
 
+/* ===== AQI Box Light Mode ===== */
+body.light .condition-grid .condition:last-child {
+  background: rgba(255, 255, 255, 0.95);
+  color: #111;
+}
+
+body.light .condition-grid .condition:last-child i {
+  color: #6a54c4;
+}
+
+body.light .condition-grid .condition:last-child span,
+body.light .condition-grid .condition:last-child p,
+body.light .condition-grid .condition:last-child a {
+  color: #111;
+}
+
+/* ===== Forecast Day Light Mode ===== */
 body.light .forecast-day {
   background: rgba(255, 255, 255, 0.95);
   color: #111;
   box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
 }
 
+/* ===== Theme Toggle Light Mode ===== */
 body.light .theme-toggle {
   background: linear-gradient(145deg, #687bf9, #6890fd);
 }
