@@ -1,54 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Weather Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RealTime Weather Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="script.js"></script>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Dynamic Weather Dashboard</h1>
-            <button id="theme-toggle">🌗</button>
-        </header>
 
-        <div class="search">
-            <input type="text" id="city-input" placeholder="Enter city name">
-            <button id="search-btn">Search</button>
-            <button id="voice-btn">🎤 Voice Search</button>
-        </div>
+<div class="theme-toggle" id="themeToggle">
+  <span class="sun">☀️</span>
+  <span class="moon">🌙</span>
+</div>
 
-        <div id="favorites">
-            <h3>Favorite Cities</h3>
-            <div id="favorite-list"></div>
-        </div>
 
-        <div id="weather-container">
-            <div id="weather-left">
-                <h2 id="city-name"></h2>
-                <p id="date-time"></p>
-            </div>
-            <div id="weather-right">
-                <div id="weather-details">
-                    
-                    <p id="temp"></p>
-                    <p id="description"></p>
-                    <p id="humidity"></p>
-                    <p id="wind"></p>
-                    <p id="pressure"></p>
-                    <p id="aqi"></p>
-                </div>
-                <button id="save-btn">⭐ Save City</button>
-            </div>
-        </div>
 
-        <div id="forecast">
-            <h3>5-Day Forecast</h3>
-            <div id="forecast-cards"></div>
-        </div>
+  <!-- Header -->
+  <header>
+    <h1 id="siteTitle">RealTime Weather</h1>
+    <div class="datetime" id="datetime"></div>
+  </header>
+
+  <!-- Search Section -->
+  <section class="search-section">
+    <input type="text" id="cityInput" placeholder="Search city..." />
+
+    <button id="searchBtn"><i class="fas fa-search"></i> Search</button>
+    <button id="voiceBtn"><i class="fas fa-microphone"></i> Voice</button>
+  </section>
+
+  <!-- Info Banner -->
+  <section class="info-banner" id="infoBanner">Fetching weather data...</section>
+
+  <!-- Weather Content -->
+  <main class="weather-content">
+    <div class="weather-box animate-box">
+      <h2 id="cityName">—</h2>
+      <p id="dateText">—</p>
+      <h1 id="temperature">--°C</h1>
+      <p id="description">---</p>
+      <img id="weatherIcon" src="" alt="icon" />
     </div>
 
-    <script src="script.js"></script>
+    <!-- Air Conditions (with AQI inside) -->
+    <div class="air-conditions animate-box">
+      <h3>Air Conditions</h3>
+      <div class="condition-grid">
+        <div class="condition"><i class="fas fa-temperature-low"></i><span id="realFeel">--°C</span><p>Real Feel</p></div>
+        <div class="condition"><i class="fas fa-wind"></i><span id="windSpeed">-- km/h</span><p>Wind</p></div>
+        <div class="condition"><i class="fas fa-tint"></i><span id="humidity">--%</span><p>Humidity</p></div>
+        <div class="condition"><i class="fas fa-tachometer-alt"></i><span id="pressure">-- hPa</span><p>Pressure</p></div>
+        <div class="condition"><i class="fas fa-smog"></i><span id="aqiValue">--</span><p id="aqiStatus">AQI Info</p><A>Air Quality</A></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Forecast Section -->
+  <section class="forecast">
+    <h3>5-Day Forecast</h3>
+    <div class="forecast-container" id="forecast"></div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 RealTime Weather | SHRINIDHI x WeatherAPI</p>
+  </footer>
+
+  <script src="https://kit.fontawesome.com/a2c5d5f6f0.js" crossorigin="anonymous"></script>
 </body>
 </html>

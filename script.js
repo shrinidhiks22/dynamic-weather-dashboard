@@ -1,160 +1,168 @@
-const apiKey = "1d3847fad20fc4eea38c3231896e4191"; // Replace with your API key
+const apiKey = "f3437fa91caeb6b10f5aac10a85ac503"; // 🔹 Replace with your OpenWeather key
 
-const cityInput = document.getElementById("city-input");
-const searchBtn = document.getElementById("search-btn");
-const voiceBtn = document.getElementById("voice-btn");
-const cityNameEl = document.getElementById("city-name");
-const tempEl = document.getElementById("temp");
-const descriptionEl = document.getElementById("description");
-const humidityEl = document.getElementById("humidity");
-const windEl = document.getElementById("wind");
-const pressureEl = document.getElementById("pressure");
-const forecastCards = document.getElementById("forecast-cards");
-const aqiEl = document.getElementById("aqi");
-const saveBtn = document.getElementById("save-btn");
-const favoriteList = document.getElementById("favorite-list");
-const themeToggle = document.getElementById("theme-toggle");
+// Elements
+const cityInput = document.getElementById("cityInput");
+const searchBtn = document.getElementById("searchBtn");
+const cityName = document.getElementById("cityName");
+const dateText = document.getElementById("dateText");
+const temperature = document.getElementById("temperature");
+const description = document.getElementById("description");
+const weatherIcon = document.getElementById("weatherIcon");
+const infoBanner = document.getElementById("infoBanner");
+const realFeel = document.getElementById("realFeel");
+const windSpeed = document.getElementById("windSpeed");
+const humidity = document.getElementById("humidity");
+const pressure = document.getElementById("pressure");
+const forecast = document.getElementById("forecast");
+const aqiValue = document.getElementById("aqiValue");
+const aqiStatus = document.getElementById("aqiStatus");
+const voiceBtn = document.getElementById("voiceBtn");
+const themeToggle = document.getElementById("themeToggle");
+const themeIcon = document.getElementById("themeIcon");
 
-let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+// ====== Date Time ======
+setInterval(() => {
+  const now = new Date();
+  document.getElementById("datetime").textContent = now.toUTCString();
+}, 1000);
 
-// ========================
-// Theme Toggle
-// ========================
-themeToggle.addEventListener("click", () => {
-    if(document.body.classList.contains("day")) {
-        document.body.classList.replace("day", "night");
-        localStorage.setItem("theme", "night");
-    } else {
-        document.body.classList.replace("night", "day");
-        localStorage.setItem("theme", "day");
-    }
-});
+// ====== Fetch Weather ======
+async function fetchWeather(city) {
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+  const res = await fetch(url);
+  const data = await res.json();
 
-if(localStorage.getItem("theme") === "night") {
-    document.body.classList.add("night");
-} else {
-    document.body.classList.add("day");
+  if (data.cod !== 200) {
+    infoBanner.textContent = "City not found.";
+    return;
+  }
+
+  cityName.textContent = `${data.name}, ${data.sys.country}`;
+  dateText.textContent = new Date().toDateString();
+  temperature.textContent = `${Math.round(data.main.temp)}°C`;
+  description.textContent = data.weather[0].description;
+  weatherIcon.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+
+  realFeel.textContent = `${Math.round(data.main.feels_like)}°C`;
+  windSpeed.textContent = `${data.wind.speed} km/h`;
+  humidity.textContent = `${data.main.humidity}%`;
+  pressure.textContent = `${data.main.pressure} hPa`;
+  infoBanner.textContent = `Today in ${data.name}: ${data.weather[0].description} with ${data.main.temp}°C, Wind ${data.wind.speed} km/h, Humidity ${data.main.humidity}%.`;
+
+  fetchForecast(data.coord.lat, data.coord.lon);
+  fetchAQI(data.coord.lat, data.coord.lon);
 }
 
-// ========================
-// Favorites
-// ========================
-function renderFavorites() {
-    favoriteList.innerHTML = "";
-    favorites.forEach(city => {
-        const btn = document.createElement("button");
-        btn.textContent = city;
-        btn.addEventListener("click", () => getWeather(city));
-        favoriteList.appendChild(btn);
-    });
-}
-renderFavorites();
+// ====== Fetch Forecast ======
+async function fetchForecast(lat, lon) {
+  const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+  const res = await fetch(url);
+  const data = await res.json();
 
-saveBtn.addEventListener("click", () => {
-    const city = cityNameEl.textContent;
-    if(city && !favorites.includes(city)) {
-        favorites.push(city);
-        localStorage.setItem("favorites", JSON.stringify(favorites));
-        renderFavorites();
-    }
-});
+  forecast.innerHTML = "";
+  const daily = {};
+  data.list.forEach(item => {
+    const date = item.dt_txt.split(" ")[0];
+    if (!daily[date]) daily[date] = item;
+  });
 
-// ========================
-// Fetch Weather
-// ========================
-async function getWeather(city) {
-    try {
-        // Current Weather
-        const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`);
-        const data = await res.json();
-        if(data.cod !== 200){ alert(data.message); return; }
+  const daysOfWeek = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const dateKeys = Object.keys(daily).slice(0, 5);
 
-        cityNameEl.textContent = data.name;
-        tempEl.textContent = `Temperature: ${data.main.temp}°C`;
-        descriptionEl.textContent = `Condition: ${data.weather[0].description}`;
-        humidityEl.textContent = `Humidity: ${data.main.humidity}%`;
-        windEl.textContent = `Wind: ${data.wind.speed} m/s`;
-        pressureEl.textContent = `Pressure: ${data.main.pressure} hPa`;
+  dateKeys.forEach((date, index) => {
+    const item = daily[date];
+    let dayLabel = "";
+    if(index === 0) dayLabel = "Today";
+    else if(index === 1) dayLabel = "Tomorrow";
+    else dayLabel = daysOfWeek[new Date(date).getDay()];
 
-        // AQI
-        const lat = data.coord.lat;
-        const lon = data.coord.lon;
-        const aqiRes = await fetch(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${apiKey}`);
-        const aqiData = await aqiRes.json();
-        const aqiValue = aqiData.list[0].main.aqi;
-        const aqiMap = ["Good ✅","Fair 🙂","Moderate 😐","Poor 😷","Very Poor 🚨"];
-        aqiEl.textContent = `Air Quality Index: ${aqiMap[aqiValue-1]}`;
-
-        // 5-Day Forecast Horizontal
-        const forecastRes = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`);
-        const forecastData = await forecastRes.json();
-        forecastCards.innerHTML = "";
-        const forecastList = forecastData.list.filter(f => f.dt_txt.includes("12:00:00"));
-        forecastList.forEach(f => {
-            const card = document.createElement("div");
-            card.classList.add("forecast-card");
-            card.innerHTML = `
-                <p>${new Date(f.dt_txt).toLocaleDateString()}</p>
-                <img src="http://openweathermap.org/img/wn/${f.weather[0].icon}@2x.png" alt="">
-                <p>${f.main.temp}°C</p>
-                <p>${f.weather[0].description}</p>
-            `;
-            forecastCards.appendChild(card);
-        });
-
-        // Dynamic Background
-        const mainWeather = data.weather[0].main.toLowerCase();
-        if(mainWeather.includes("cloud")) document.body.style.background="linear-gradient(to top, #bdc3c7, #2c3e50)";
-        else if(mainWeather.includes("rain")) document.body.style.background="linear-gradient(to top, #4b79a1, #283e51)";
-        else if(mainWeather.includes("clear")) document.body.style.background="linear-gradient(to top, #fbc2eb, #a6c1ee)";
-        else if(mainWeather.includes("snow")) document.body.style.background="linear-gradient(to top, #e6e9f0, #eef1f5)";
-        else document.body.style.background="linear-gradient(to top, #87ceeb, #ffffff)";
-
-    } catch(err){
-        console.error(err);
-        alert("Error fetching weather data");
-    }
+    forecast.innerHTML += `
+      <div class="forecast-day">
+        <h4>${dayLabel}</h4>
+        <img src="https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png" />
+        <p>${Math.round(item.main.temp_min)}°C / ${Math.round(item.main.temp_max)}°C</p>
+      </div>
+    `;
+  });
 }
 
-// ========================
-// Search Button
-// ========================
+// ====== Fetch AQI ======
+async function fetchAQI(lat, lon) {
+  const url = `https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  const aqi = data.list[0].main.aqi;
+
+  const aqiLevels = ["Good ✅", "Fair ", "Moderate ", "Poor ", "Very Poor "];
+  aqiValue.textContent = aqi;
+  aqiStatus.textContent = aqiLevels[aqi - 1];
+}
+
+// ====== Detect Location ======
+window.onload = () => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      fetchWeatherByCoords(pos.coords.latitude, pos.coords.longitude);
+    }, () => fetchWeather("Trichy"));
+  } else fetchWeather("Trichy");
+};
+
+async function fetchWeatherByCoords(lat, lon) {
+  const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+  const res = await fetch(url);
+  const data = await res.json();
+  fetchWeather(data.name);
+}
+
+// ====== Search ======
 searchBtn.addEventListener("click", () => {
-    const city = cityInput.value.trim();
-    if(city) getWeather(city);
+  const city = cityInput.value.trim();
+  if (city) fetchWeather(city);
 });
 
-// ========================
-// Voice Search
-// ========================
+// ====== Voice Search (Animated & Modern) ======
 voiceBtn.addEventListener("click", () => {
-    if('webkitSpeechRecognition' in window) {
-        const recognition = new webkitSpeechRecognition();
-        recognition.lang = 'en-US';
-        recognition.start();
-        recognition.onresult = (event) => {
-            const spokenCity = event.results[0][0].transcript;
-            cityInput.value = spokenCity;
-            getWeather(spokenCity);
-        }
-    } else {
-        alert("Voice search not supported in this browser.");
-    }
+  if(!('webkitSpeechRecognition' in window)) {
+    alert("Voice search not supported in this browser.");
+    return;
+  }
+
+  const recognition = new webkitSpeechRecognition();
+  recognition.lang = "en-US";
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  // Start listening
+  recognition.start();
+  voiceBtn.classList.add("listening");
+  infoBanner.textContent = "🎤 Listening...";
+
+  recognition.onresult = function(event) {
+    const city = event.results[0][0].transcript;
+    cityInput.value = city;
+    fetchWeather(city);
+  };
+
+  recognition.onspeechend = function() {
+    recognition.stop();
+    voiceBtn.classList.remove("listening");
+    infoBanner.textContent = `Searching weather for "${cityInput.value}"...`;
+  };
+
+  recognition.onerror = function(event) {
+    voiceBtn.classList.remove("listening");
+    infoBanner.textContent = "Voice recognition error. Try again.";
+    console.error("Speech recognition error:", event.error);
+  };
 });
 
-// ========================
-// Detect User Location
-// ========================
-window.addEventListener("load", () => {
-    if(navigator.geolocation){
-        navigator.geolocation.getCurrentPosition(pos => {
-            const lat = pos.coords.latitude;
-            const lon = pos.coords.longitude;
-            fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`)
-                .then(res => res.json())
-                .then(data => getWeather(data.name));
-        });
-    } else {
-        getWeather("Chennai"); // fallback
-    }
+
+// ====== Theme Toggle ======
+themeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("light");
+  if(document.body.classList.contains("light")){
+    themeIcon.classList.replace('fa-moon','fa-sun');
+  } else {
+    themeIcon.classList.replace('fa-sun','fa-moon');
+  }
 });
