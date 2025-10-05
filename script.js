@@ -37,7 +37,11 @@ async function fetchWeather(city) {
     return;
   }
 
-  cityName.textContent = `${data.name}, ${data.sys.country}`;
+  // Convert country code to full country name
+  const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
+  const countryName = regionNames.of(data.sys.country);
+
+  cityName.textContent = `${data.name}, ${countryName}`;
   dateText.textContent = new Date().toDateString();
   temperature.textContent = `${Math.round(data.main.temp)}°C`;
   description.textContent = data.weather[0].description;
@@ -93,7 +97,7 @@ async function fetchAQI(lat, lon) {
   const data = await res.json();
   const aqi = data.list[0].main.aqi;
 
-  const aqiLevels = ["Good ✅", "Fair ", "Moderate ", "Poor ", "Very Poor "];
+  const aqiLevels = ["Good ✅", "Fair 🙂", "Moderate 😐", "Poor 😷", "Very Poor ☠️"];
   aqiValue.textContent = aqi;
   aqiStatus.textContent = aqiLevels[aqi - 1];
 }
@@ -120,7 +124,7 @@ searchBtn.addEventListener("click", () => {
   if (city) fetchWeather(city);
 });
 
-// ====== Voice Search (Animated & Modern) ======
+// ====== Voice Search ======
 voiceBtn.addEventListener("click", () => {
   if(!('webkitSpeechRecognition' in window)) {
     alert("Voice search not supported in this browser.");
@@ -132,7 +136,6 @@ voiceBtn.addEventListener("click", () => {
   recognition.interimResults = false;
   recognition.maxAlternatives = 1;
 
-  // Start listening
   recognition.start();
   voiceBtn.classList.add("listening");
   infoBanner.textContent = "🎤 Listening...";
@@ -155,7 +158,6 @@ voiceBtn.addEventListener("click", () => {
     console.error("Speech recognition error:", event.error);
   };
 });
-
 
 // ====== Theme Toggle ======
 themeToggle.addEventListener("click", () => {
